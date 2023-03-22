@@ -7,6 +7,7 @@ import java.util.List;
 
 @Document(collection = "texts")
 public class TextEntity {
+    //burası bizim veritabanımızı temsil ediyor
     @Id
     private String _id;
     private List<String> texts;
