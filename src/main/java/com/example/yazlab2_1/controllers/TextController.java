@@ -21,8 +21,8 @@ public class TextController {
     public TextEntity createEntity(@RequestBody TextsRequest textsRequest) {
         List<String> texts = textsRequest.getTexts();
 
-        String mergedText = String.join(" ", texts);
-
+        //String mergedText = String.join(" ", texts);
+        String mergedText = mergeSentences(texts.toArray(new String[0]));
         TextEntity textEntity = new TextEntity();
         textEntity.setTexts(texts);
         textEntity.setMergedText(mergedText);
@@ -35,5 +35,33 @@ public class TextController {
     public List<TextEntity> getAllEntities() {
         return textService.getAllEntities();
     }
+    public static String mergeSentences(String[] sentences) {
+        StringBuilder result = new StringBuilder(sentences[0]);
+        String lastMerged = sentences[0];
+
+        for (int i = 1; i < sentences.length; i++) {
+            String current = sentences[i];
+
+            String[] lastWords = lastMerged.split(" ");
+            boolean foundMatch = false;
+            for (String lastWord : lastWords) {
+                if (current.startsWith(lastWord)) {
+                    foundMatch = true;
+                    break;
+                }
+            }
+
+            if (foundMatch) {
+                int index = current.indexOf(lastWords[lastWords.length-1]);
+                if (index >= 0) {
+                    result.append(current.substring(index + lastWords[lastWords.length-1].length()));
+                    lastMerged = current;
+                }
+            }
+        }
+        return result.toString();
+    }
 }
+
+
 
