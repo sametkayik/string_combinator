@@ -11,11 +11,14 @@ public class TextEntity {
     private String _id;
     private List<String> texts;
     private String mergedText;
+    private double durationTime;
+
     public TextEntity() {}
 
-    public TextEntity(List<String> texts, String mergedText) {
+    public TextEntity(List<String> texts, String mergedText, double durationTime) {
         this.texts = texts;
         this.mergedText = mergedText;
+        this.durationTime = durationTime;
     }
 
     public String get_id() {
@@ -40,5 +43,13 @@ public class TextEntity {
 
     public void setMergedText(String mergedText) {
         this.mergedText = mergedText;
+    }
+
+    public double getDurationTime() {
+        return durationTime;
+    }
+
+    public void setDurationTime(double durationTime) {
+        this.durationTime = durationTime;
     }
 }

@@ -14,8 +14,8 @@ public class TextService {
         this.textRepository = myRepository;
     }
 
-    public TextEntity saveEntity(List<String> texts, String mergedText) {
-        TextEntity entity = new TextEntity(texts, mergedText);
+    public TextEntity saveEntity(List<String> texts, String mergedText, double durationTime) {
+        TextEntity entity = new TextEntity(texts, mergedText, durationTime);
         return textRepository.save(entity);
     }
 

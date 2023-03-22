@@ -5,7 +5,9 @@ import com.example.yazlab2_1.models.TextsRequest;
 import com.example.yazlab2_1.services.TextService;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin
 @RestController
@@ -22,13 +24,21 @@ public class TextController {
         List<String> texts = textsRequest.getTexts();
 
         //String mergedText = String.join(" ", texts);
+
+        long startTime = System.nanoTime();
         String mergedText = mergeSentences(texts.toArray(new String[0]));
+        long endTime = System.nanoTime();
+        long durationTimeInNanoSec = (endTime - startTime);
+        double durationTimeInSeconds = (double)durationTimeInNanoSec / 1_000_000_000.0;
+        System.out.println("Merging Time in nanoseconds: " + durationTimeInNanoSec);
+        System.out.println("Merging Time : " + new DecimalFormat("#.############").format(durationTimeInSeconds) + " seconds");
+
         TextEntity textEntity = new TextEntity();
         textEntity.setTexts(texts);
         textEntity.setMergedText(mergedText);
+        textEntity.setDurationTime(durationTimeInSeconds);
 
-        textService.saveEntity(texts, mergedText);
-
+        textService.saveEntity(texts, mergedText, durationTimeInSeconds);
         return textEntity;
     }
     @GetMapping("/texts")
@@ -36,6 +46,7 @@ public class TextController {
         return textService.getAllEntities();
     }
     public static String mergeSentences(String[] sentences) {
+
         StringBuilder result = new StringBuilder(sentences[0].toLowerCase());
         String lastMerged = sentences[0].toLowerCase();
 
@@ -58,6 +69,7 @@ public class TextController {
                 }
             }
         }
+
         return result.toString();
     }
 }
