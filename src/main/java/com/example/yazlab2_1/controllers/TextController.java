@@ -3,11 +3,10 @@ package com.example.yazlab2_1.controllers;
 import com.example.yazlab2_1.models.TextEntity;
 import com.example.yazlab2_1.models.TextsRequest;
 import com.example.yazlab2_1.services.TextService;
+import com.example.yazlab2_1.services.MergeTextService;
 import org.springframework.web.bind.annotation.*;
-
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @CrossOrigin
 @RestController
@@ -18,15 +17,12 @@ public class TextController {
     public TextController(TextService textService) {
         this.textService = textService;
     }
-
-    @PostMapping("/texts")
-    public TextEntity createEntity(@RequestBody TextsRequest textsRequest) {
+    @PostMapping("/mergeText")
+    public TextEntity mergeText(@RequestBody TextsRequest textsRequest) {
         List<String> texts = textsRequest.getTexts();
 
-        //String mergedText = String.join(" ", texts);
-
         long startTime = System.nanoTime();
-        String mergedText = mergeSentences(texts.toArray(new String[0]));
+        String mergedText = MergeTextService.mergeSentences(texts.toArray(new String[0]));
         long endTime = System.nanoTime();
         long durationTimeInNanoSec = (endTime - startTime);
         double durationTimeInSeconds = (double)durationTimeInNanoSec / 1_000_000_000.0;
@@ -38,39 +34,16 @@ public class TextController {
         textEntity.setMergedText(mergedText);
         textEntity.setDurationTime(durationTimeInSeconds);
 
-        textService.saveEntity(texts, mergedText, durationTimeInSeconds);
         return textEntity;
+    }
+
+    @PostMapping("/saveText")
+    public void saveText(@RequestBody TextsRequest textsRequest){
+        textService.saveEntity(textsRequest.getTexts(), textsRequest.getMergedText(), textsRequest.getDurationTime());
     }
     @GetMapping("/texts")
     public List<TextEntity> getAllEntities() {
         return textService.getAllEntities();
-    }
-    public static String mergeSentences(String[] sentences) {
-
-        StringBuilder result = new StringBuilder(sentences[0].toLowerCase());
-        String lastMerged = sentences[0].toLowerCase();
-
-        for (int i = 1; i < sentences.length; i++) {
-            String current = sentences[i].toLowerCase();
-            String[] lastWords = lastMerged.split(" ");
-            boolean foundMatch = false;
-            for (String lastWord : lastWords) {
-                if (current.startsWith(lastWord)) {
-                    foundMatch = true;
-                    break;
-                }
-            }
-
-            if (foundMatch) {
-                int index = current.indexOf(lastWords[lastWords.length-1]);
-                if (index >= 0) {
-                    result.append(current.substring(index + lastWords[lastWords.length-1].length()));
-                    lastMerged = current;
-                }
-            }
-        }
-
-        return result.toString();
     }
 }
 
