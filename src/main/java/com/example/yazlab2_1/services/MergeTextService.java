@@ -4,6 +4,7 @@ public class MergeTextService {
 
     public static String mergeSentences(String[] sentences) {
 
+        //oldu mu
         StringBuilder result = new StringBuilder(sentences[0].toLowerCase());
         String lastMerged = sentences[0].toLowerCase();
 
