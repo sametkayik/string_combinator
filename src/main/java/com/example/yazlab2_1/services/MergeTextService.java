@@ -7,8 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MergeTextService {
+
     public static String mergeSentences(String[] sentences) {
 
+        //oldu mu
         StringBuilder result = new StringBuilder(sentences[0].toLowerCase());
         String lastMerged = sentences[0].toLowerCase();
 
@@ -31,6 +33,7 @@ public class MergeTextService {
         }
         return result.toString();
     }
+
     public static void permute(List<Integer> indexes, int start, List<TextEntity> textEntities, String[] texts) {
         long startTime = System.nanoTime();
         if (start == indexes.size()) {
