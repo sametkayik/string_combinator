@@ -7,24 +7,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MergeTextService {
-
     public static String mergeSentences(String[] sentences) {
-
-        //oldu mu
-        StringBuilder result = new StringBuilder(sentences[0].toLowerCase());
-        String lastMerged = sentences[0].toLowerCase();
+        StringBuilder result = new StringBuilder(sentences[0]);
+        String lastMerged = sentences[0];
 
         for (int i = 1; i < sentences.length; i++) {
-            String current = sentences[i].toLowerCase();
+            String current = sentences[i];
             String[] lastWords = lastMerged.split(" ");
-            String lastWord = lastWords[lastWords.length - 1];
+            String lastWord = lastWords[lastWords.length - 1].toLowerCase();
+            String[] currentWords = current.split(" ");
+            String currentWord = currentWords[0].toLowerCase();
 
-            if (current.startsWith(lastWord)) {
-                result.append(current.substring(lastWord.length()));
+            if (currentWord.equals(lastWord)) {
+                result.append(current.substring(currentWords[0].length()));
                 lastMerged = current;
-            }
-            else {
-                int index = current.indexOf(lastWord);
+            } else {
+                int index = current.toLowerCase().indexOf(lastWord);
                 if (index >= 0) {
                     result.append(current.substring(index + lastWord.length()));
                     lastMerged = current.substring(index);
