@@ -16,14 +16,15 @@ public class TextService {
         this.textRepository = myRepository;
     }
 
-    public TextEntity saveEntity(List<String> texts, String mergedText, double durationTime) {
+    public void saveEntity(List<String> texts, String mergedText, double durationTime, List<String> longestSentences) {
         TextEntity entity = new TextEntity(texts, mergedText, durationTime);
         entity.setCreatedTime(LocalDateTime.now());
-        return textRepository.save(entity);
+        entity.setLongestSentences(longestSentences);
+        textRepository.save(entity);
     }
-
     public List<TextEntity> getAllEntities() {
         return textRepository.findAll(Sort.by(Sort.Direction.DESC, "createdTime"));
     }
+
 }
 

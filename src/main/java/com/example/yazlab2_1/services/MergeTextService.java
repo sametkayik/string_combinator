@@ -108,9 +108,10 @@ public class MergeTextService {
             }
         }
     }
-    public static TextEntity findLongestText(List<TextEntity> textEntities) {
-        TextEntity longestTextEntity = null;
+    public static List<TextEntity> findLongestText(List<TextEntity> textEntities) {
+        List<TextEntity> longestEntities = new ArrayList<>();
         int maxLength = 0;
+        TextEntity longestTextEntity = null;
 
         for (TextEntity textEntity : textEntities) {
             String mergedText = textEntity.getMergedText();
@@ -118,9 +119,17 @@ public class MergeTextService {
             if (length > maxLength) {
                 maxLength = length;
                 longestTextEntity = textEntity;
+                longestEntities.clear();
+                longestEntities.add(textEntity);
+            } else if (length == maxLength && longestTextEntity != null && !longestTextEntity.getMergedText().equals(mergedText)) {
+                longestEntities.add(textEntity);
             }
         }
 
-        return longestTextEntity;
+        // Son elemanın tekrar eklenmemesi için kontrol et
+        if (longestTextEntity != null && maxLength == longestTextEntity.getMergedText().length()) {
+            longestEntities.remove(longestTextEntity);
+        }
+        return longestEntities;
     }
 }

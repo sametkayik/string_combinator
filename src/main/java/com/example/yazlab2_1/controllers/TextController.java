@@ -18,53 +18,42 @@ public class TextController {
     public TextController(TextService textService) {
         this.textService = textService;
     }
+
+    private final List<String> longestSentences = new ArrayList<>();
     @PostMapping("/mergeText")
     public TextEntity mergeText(@RequestBody TextsRequest textsRequest) {
         List<String> texts = textsRequest.getTexts();
         List<TextEntity> textEntities = new ArrayList<>();
+        List<TextEntity> longestTextEntities;
 
         List<Integer> indexes = new ArrayList<>();
         for (int i = 0; i < texts.size(); i++) {
             indexes.add(i);
         }
+
         long startTime = System.nanoTime();
         MergeTextService.permuteLinear(indexes, textEntities, texts.toArray(new String[0]));
         long endTime = System.nanoTime();
-        TextEntity longestTextEntity = MergeTextService.findLongestText(textEntities);
 
-        double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
-        System.out.println("Whole process time : " + new DecimalFormat("#.############").format(durationTimeInSeconds) + " seconds");
+        longestTextEntities = MergeTextService.findLongestText(textEntities);
 
-        longestTextEntity.setDurationTime(durationTimeInSeconds);
-        return longestTextEntity;
-    }
-    @PostMapping("/mergeTextNonlinear")
-    public TextEntity mergeTextNonlinear(@RequestBody TextsRequest textsRequest) {
-
-        List<String> texts = textsRequest.getTexts();
-        List<TextEntity> textEntities = new ArrayList<>();
-
-        List<Integer> indexes = new ArrayList<>();
-        for (int i = 0; i < texts.size(); i++) {
-            indexes.add(i);
+        for (TextEntity textEntity : longestTextEntities) {
+            longestSentences.add(textEntity.getMergedText());
+            System.out.println("::::: " + textEntity.getMergedText());
         }
-        long startTime = System.nanoTime();
-        MergeTextService.permuteNonlinear(indexes, 0, textEntities, texts.toArray(new String[0]));
-        long endTime = System.nanoTime();
-        TextEntity longestTextEntity = MergeTextService.findLongestText(textEntities);
 
-        double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
-        System.out.println("Whole process time : " + new DecimalFormat("#.############").format(durationTimeInSeconds) + " seconds");
+        TextEntity longestTextEntity = longestTextEntities.get(longestTextEntities.size() - 1);
+        longestTextEntity.setDurationTime((endTime - startTime) / 1_000_000_000.0);
 
-        longestTextEntity.setDurationTime(durationTimeInSeconds);
+        System.out.printf("Whole process time: %.6f seconds%n", (endTime - startTime) / 1_000_000_000.0);
+
         return longestTextEntity;
     }
-
     @PostMapping("/saveText")
-    public void saveText(@RequestBody TextsRequest textsRequest){
-        textService.saveEntity(textsRequest.getTexts(), textsRequest.getMergedText(), textsRequest.getDurationTime());
-    }
+    public void saveText(@RequestBody TextsRequest textsRequest) {
 
+        textService.saveEntity(textsRequest.getTexts(), textsRequest.getMergedText(), textsRequest.getDurationTime(), longestSentences);
+    }
     @GetMapping("/texts")
     public List<TextEntity> getAllEntities() {
         return textService.getAllEntities();
