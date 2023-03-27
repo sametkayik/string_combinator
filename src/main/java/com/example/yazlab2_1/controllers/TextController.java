@@ -20,21 +20,23 @@ public class TextController {
     }
     @PostMapping("/mergeText")
     public TextEntity mergeText(@RequestBody TextsRequest textsRequest) {
-        long startTime = System.nanoTime();
         List<String> texts = textsRequest.getTexts();
+        List<TextEntity> textEntities = new ArrayList<>();
 
-        String mergedText = MergeTextService.mergeSentences(texts.toArray(new String[0]));
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < texts.size(); i++) {
+            indexes.add(i);
+        }
+        long startTime = System.nanoTime();
+        MergeTextService.permuteLinear(indexes, textEntities, texts.toArray(new String[0]));
         long endTime = System.nanoTime();
+        TextEntity longestTextEntity = MergeTextService.findLongestText(textEntities);
 
         double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
-        System.out.println("Merging Time : " + new DecimalFormat("#.############").format(durationTimeInSeconds) + " seconds");
+        System.out.println("Whole process time : " + new DecimalFormat("#.############").format(durationTimeInSeconds) + " seconds");
 
-        TextEntity textEntity = new TextEntity();
-        textEntity.setTexts(texts);
-        textEntity.setMergedText(mergedText);
-        textEntity.setDurationTime(durationTimeInSeconds);
-
-        return textEntity;
+        longestTextEntity.setDurationTime(durationTimeInSeconds);
+        return longestTextEntity;
     }
     @PostMapping("/mergeTextNonlinear")
     public TextEntity mergeTextNonlinear(@RequestBody TextsRequest textsRequest) {
@@ -47,7 +49,7 @@ public class TextController {
             indexes.add(i);
         }
         long startTime = System.nanoTime();
-        MergeTextService.permute(indexes, 0, textEntities, texts.toArray(new String[0]));
+        MergeTextService.permuteNonlinear(indexes, 0, textEntities, texts.toArray(new String[0]));
         long endTime = System.nanoTime();
         TextEntity longestTextEntity = MergeTextService.findLongestText(textEntities);
 

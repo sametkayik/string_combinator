@@ -31,8 +31,47 @@ public class MergeTextService {
         }
         return result.toString();
     }
+    public static void permuteLinear(List<Integer> indexes, List<TextEntity> textEntities, String[] texts) {
+        long startTime = System.nanoTime();
+        for (int r = 2; r <= indexes.size(); r++) {
+            int[] indices = new int[r];
+            for (int i = 0; i < r; i++) {
+                indices[i] = i;
+            }
+            while (true) {
+                String[] permutedTexts = new String[r];
+                List<Integer> mergedIndexes = new ArrayList<>();
+                for (int i = 0; i < r; i++) {
+                    int index = indexes.get(indices[i]);
+                    permutedTexts[i] = texts[index];
+                    mergedIndexes.add(index);
+                }
+                String mergedText = mergeSentences(permutedTexts);
+                long endTime = System.nanoTime();
+                double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
+                System.out.println("Merged Text: " + mergedText + ", Indexes: " + mergedIndexes);
+                TextEntity textEntity = new TextEntity();
+                textEntity.setTexts(Arrays.asList(permutedTexts));
+                textEntity.setMergedText(mergedText);
+                textEntity.setDurationTime(durationTimeInSeconds);
+                textEntities.add(textEntity);
 
-    public static void permute(List<Integer> indexes, int start, List<TextEntity> textEntities, String[] texts) {
+                int i = r - 1;
+                while (i >= 0 && indices[i] == i + indexes.size() - r) {
+                    i--;
+                }
+                if (i < 0) {
+                    break;
+                }
+                indices[i]++;
+                for (int j = i + 1; j < r; j++) {
+                    indices[j] = indices[j - 1] + 1;
+                }
+            }
+        }
+    }
+
+    public static void permuteNonlinear(List<Integer> indexes, int start, List<TextEntity> textEntities, String[] texts) {
         long startTime = System.nanoTime();
         if (start == indexes.size()) {
             String[] permutedTexts = new String[texts.length];
@@ -43,7 +82,7 @@ public class MergeTextService {
                 mergedIndexes.add(index);
             }
 
-            String mergedText = MergeTextService.mergeSentences(permutedTexts);
+            String mergedText = mergeSentences(permutedTexts);
             long endTime = System.nanoTime();
             double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
 
@@ -61,7 +100,7 @@ public class MergeTextService {
                 indexes.set(start, indexes.get(i));
                 indexes.set(i, temp);
 
-                permute(indexes, start + 1, textEntities, texts);
+                permuteNonlinear(indexes, start + 1, textEntities, texts);
 
                 temp = indexes.get(start);
                 indexes.set(start, indexes.get(i));
