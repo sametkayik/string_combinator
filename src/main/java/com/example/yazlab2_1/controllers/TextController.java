@@ -15,7 +15,6 @@ import java.util.List;
 @RequestMapping("/api")
 public class TextController {
     private final TextService textService;
-
     public TextController(TextService textService) {
         this.textService = textService;
     }

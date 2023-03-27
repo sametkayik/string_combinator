@@ -10,10 +10,7 @@ public class TextsRequest {
     public List<String> getTexts() {
         return texts;
     }
-
     public double getDurationTime() { return durationTime; }
-
     public String getMergedText() { return mergedText; }
-
 }
 

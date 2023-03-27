@@ -2,7 +2,7 @@ package com.example.yazlab2_1.services;
 
 import com.example.yazlab2_1.models.TextEntity;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,16 +36,18 @@ public class MergeTextService {
         long startTime = System.nanoTime();
         if (start == indexes.size()) {
             String[] permutedTexts = new String[texts.length];
+            List<Integer> mergedIndexes = new ArrayList<>();
             for (int i = 0; i < indexes.size(); i++) {
-                permutedTexts[i] = texts[indexes.get(i)];
+                int index = indexes.get(i);
+                permutedTexts[i] = texts[index];
+                mergedIndexes.add(index);
             }
 
             String mergedText = MergeTextService.mergeSentences(permutedTexts);
             long endTime = System.nanoTime();
             double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
 
-            System.out.println("Merged Text: " + mergedText);
-            System.out.println("Merging Time : " + new DecimalFormat("#.############").format(durationTimeInSeconds) + " seconds");
+            System.out.println("Merged Text: " + mergedText + ", Indexes: " + mergedIndexes);
 
             TextEntity textEntity = new TextEntity();
             textEntity.setTexts(Arrays.asList(permutedTexts));
