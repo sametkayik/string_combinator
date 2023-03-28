@@ -14,15 +14,15 @@ public class TextEntity {
     private List<String> texts;
     private List<String> longestSentences;
     private String mergedText;
-    private double durationTime;
+    private double durationInSeconds;
     @CreatedDate
     private LocalDateTime createdTime;
     public TextEntity() {}
 
-    public TextEntity(List<String> texts, String mergedText, double durationTime) {
+    public TextEntity(List<String> texts, String mergedText, double durationInSeconds) {
         this.texts = texts;
         this.mergedText = mergedText;
-        this.durationTime = durationTime;
+        this.durationInSeconds = durationInSeconds;
     }
     public String get_id() {
         return _id;
@@ -40,11 +40,11 @@ public class TextEntity {
     public void setMergedText(String mergedText) {
         this.mergedText = mergedText;
     }
-    public double getDurationTime() {
-        return durationTime;
+    public double getDurationInSeconds() {
+        return durationInSeconds;
     }
-    public void setDurationTime(double durationTime) {
-        this.durationTime = durationTime;
+    public void setDurationInSeconds(double durationTime) {
+        this.durationInSeconds = durationTime;
     }
     public LocalDateTime getCreatedTime() { return createdTime; }
     public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }

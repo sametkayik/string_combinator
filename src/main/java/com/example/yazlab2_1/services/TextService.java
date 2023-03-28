@@ -16,8 +16,8 @@ public class TextService {
         this.textRepository = myRepository;
     }
 
-    public void saveEntity(List<String> texts, String mergedText, double durationTime, List<String> longestSentences) {
-        TextEntity entity = new TextEntity(texts, mergedText, durationTime);
+    public void saveEntity(List<String> texts, String mergedText, double durationInSeconds, List<String> longestSentences) {
+        TextEntity entity = new TextEntity(texts, mergedText, durationInSeconds);
         entity.setCreatedTime(LocalDateTime.now());
         entity.setLongestSentences(longestSentences);
         textRepository.save(entity);

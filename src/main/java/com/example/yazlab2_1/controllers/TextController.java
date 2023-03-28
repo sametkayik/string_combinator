@@ -48,8 +48,8 @@ public class TextController {
         longestSentences.clear();
         longestSentences.addAll(uniqueLongestSentences);
         TextEntity longestTextEntity = longestTextEntities.get(0);
-        longestTextEntity.setDurationTime((System.nanoTime() - startTime) / 1_000_000_000.0);
-        System.out.printf("Whole process time: %.6f seconds%n", longestTextEntity.getDurationTime());
+        longestTextEntity.setDurationInSeconds((System.nanoTime() - startTime) / 1_000_000_000.0);
+        System.out.printf("Whole process time: %.6f seconds%n", longestTextEntity.getDurationInSeconds());
         return longestTextEntity;
     }
 
@@ -58,7 +58,7 @@ public class TextController {
         textService.saveEntity(
                 textsRequest.getTexts(),
                 textsRequest.getMergedText(),
-                textsRequest.getDurationTime(),
+                textsRequest.getDurationInSeconds(),
                 longestSentences
         );
     }

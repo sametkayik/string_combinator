@@ -66,12 +66,12 @@ public class MergeTextService {
     private static void createEntity(List<TextEntity> textEntities, long startTime, String[] permutedTexts, List<Integer> mergedIndexes) {
         String mergedText = mergeSentences(permutedTexts);
         long endTime = System.nanoTime();
-        double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
+        double durationInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
         System.out.println("Merged Text: " + mergedText + ", Indexes: " + mergedIndexes);
         TextEntity textEntity = new TextEntity();
         textEntity.setTexts(Arrays.asList(permutedTexts));
         textEntity.setMergedText(mergedText);
-        textEntity.setDurationTime(durationTimeInSeconds);
+        textEntity.setDurationInSeconds(durationInSeconds);
         textEntities.add(textEntity);
     }
 
