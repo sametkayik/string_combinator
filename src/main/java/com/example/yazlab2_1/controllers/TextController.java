@@ -25,10 +25,18 @@ public class TextController {
     @PostMapping("/mergeText")
     public TextEntity mergeText(@RequestBody TextsRequest textsRequest) {
         List<String> texts = textsRequest.getTexts();
-        List<TextEntity> textEntities = new ArrayList<>();
+
         long startTime = System.nanoTime();
-        MergeTextService.permuteLinear(getRange(texts.size()), textEntities, texts.toArray(new String[0]));
-        return findLongestText(textEntities, startTime);
+        String mergedText = MergeTextService.mergeSentences(texts.toArray(new String[0]));
+        long endTime = System.nanoTime();
+        double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
+
+        TextEntity textEntity = new TextEntity();
+        textEntity.setTexts(texts);
+        textEntity.setMergedText(mergedText);
+        textEntity.setDurationTime(durationTimeInSeconds);
+
+        return textEntity;
     }
 
     @PostMapping("/mergeTextNonlinear")
