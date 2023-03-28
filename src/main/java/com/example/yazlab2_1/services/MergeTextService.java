@@ -46,15 +46,7 @@ public class MergeTextService {
                     permutedTexts[i] = texts[index];
                     mergedIndexes.add(index);
                 }
-                String mergedText = mergeSentences(permutedTexts);
-                long endTime = System.nanoTime();
-                double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
-                System.out.println("Merged Text: " + mergedText + ", Indexes: " + mergedIndexes);
-                TextEntity textEntity = new TextEntity();
-                textEntity.setTexts(Arrays.asList(permutedTexts));
-                textEntity.setMergedText(mergedText);
-                textEntity.setDurationTime(durationTimeInSeconds);
-                textEntities.add(textEntity);
+                createEntity(textEntities, startTime, permutedTexts, mergedIndexes);
 
                 int i = r - 1;
                 while (i >= 0 && indices[i] == i + indexes.size() - r) {
@@ -71,6 +63,18 @@ public class MergeTextService {
         }
     }
 
+    private static void createEntity(List<TextEntity> textEntities, long startTime, String[] permutedTexts, List<Integer> mergedIndexes) {
+        String mergedText = mergeSentences(permutedTexts);
+        long endTime = System.nanoTime();
+        double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
+        System.out.println("Merged Text: " + mergedText + ", Indexes: " + mergedIndexes);
+        TextEntity textEntity = new TextEntity();
+        textEntity.setTexts(Arrays.asList(permutedTexts));
+        textEntity.setMergedText(mergedText);
+        textEntity.setDurationTime(durationTimeInSeconds);
+        textEntities.add(textEntity);
+    }
+
     public static void permuteNonlinear(List<Integer> indexes, int start, List<TextEntity> textEntities, String[] texts) {
         long startTime = System.nanoTime();
         if (start == indexes.size()) {
@@ -82,17 +86,7 @@ public class MergeTextService {
                 mergedIndexes.add(index);
             }
 
-            String mergedText = mergeSentences(permutedTexts);
-            long endTime = System.nanoTime();
-            double durationTimeInSeconds = (double) (endTime - startTime) / 1_000_000_000.0;
-
-            System.out.println("Merged Text: " + mergedText + ", Indexes: " + mergedIndexes);
-
-            TextEntity textEntity = new TextEntity();
-            textEntity.setTexts(Arrays.asList(permutedTexts));
-            textEntity.setMergedText(mergedText);
-            textEntity.setDurationTime(durationTimeInSeconds);
-            textEntities.add(textEntity);
+            createEntity(textEntities, startTime, permutedTexts, mergedIndexes);
 
         } else {
             for (int i = start; i < indexes.size(); i++) {
@@ -124,11 +118,6 @@ public class MergeTextService {
             } else if (length == maxLength && longestTextEntity != null && !longestTextEntity.getMergedText().equals(mergedText)) {
                 longestEntities.add(textEntity);
             }
-        }
-
-        // Son elemanın tekrar eklenmemesi için kontrol et
-        if (longestTextEntity != null && maxLength == longestTextEntity.getMergedText().length()) {
-            longestEntities.remove(longestTextEntity);
         }
         return longestEntities;
     }
